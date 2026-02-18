@@ -1,6 +1,12 @@
 from uuid import UUID
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, Never, Any
+from typing import(
+    TypeVar, 
+    Generic, 
+    Never, 
+    Any, 
+    Sequence
+) 
 
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,13 +21,20 @@ class AbstractRepository(ABC):
     async def add_one(self, *args: Any, **kwargs: Any) -> Never:
         raise NotImplementedError
 
+    @abstractmethod
     async def add_one_and_get_id(self, *args: Any, **kwargs: Any) -> Never:
         raise NotImplementedError
     
+    @abstractmethod
     async def add_one_and_get_obj(self, *args: Any, **kwargs: Any) -> Never:
         raise NotImplementedError
     
+    @abstractmethod
     async def get_by_filter_one_or_none(self, *args: Any, **kwargs: Any) -> Never:
+        raise NotImplementedError
+    
+    @abstractmethod
+    async def get_by_filter_all(self, *args: Any, **kwargs: Any) -> Never:
         raise NotImplementedError
     
 
@@ -49,4 +62,8 @@ class SQLAlchemyRepository(AbstractRepository, Generic[T]):
         stmt = select(self._model).filter_by(**kwargs)
         result: Result = await self.session.execute(stmt)
         return result.unique().scalar_one_or_none()
-        
+    
+    async def get_by_filter_all(self, **kwargs: Any) -> Sequence[T]:
+        stmt = select(self._model).filter_by(**kwargs)
+        result: Result = await self.session.execute(stmt)
+        return result.scalars().all()

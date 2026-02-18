@@ -1,12 +1,15 @@
 from enum import Enum
-from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app.core.errors import AppError
+from app.core.config import get_settings
+from app.grpc.container import GrpcClients
+
 from app.api.v1.handlers.products import router as products_router
 
+settings = get_settings()
 app = FastAPI()
 
 @app.exception_handler(AppError)
@@ -22,9 +25,12 @@ async def app_error_handler(request: Request, exc: AppError):
         }
     )
 
+@app.on_event("startup")
+async def startup():
+    app.state.grpc = GrpcClients(settings)
 
 app.include_router(products_router)
 
 @app.on_event("shutdown")
 async def shutdown():
-    await app.state.user_client.close()
+    await app.state.grpc.close()

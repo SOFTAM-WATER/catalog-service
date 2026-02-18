@@ -1,0 +1,16 @@
+syntax = "proto3";
+package users.v1;
+
+service UserService {
+    rpc ValidateTelegramUser(ValidateUserRequest) returns (ValidateUserResponse);
+}
+
+message ValidateUserRequest {
+    int64 telegram_id = 1;
+    string phone = 2;
+    string full_name = 3;
+}
+
+message ValidateUserResponse {
+    string user_id = 1;
+}

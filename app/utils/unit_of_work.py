@@ -5,6 +5,7 @@ from typing import Any, Never
 
 from app.database.db import async_session_maker
 from app.repositories.product_repo import ProductRepository
+from app.grpc.container import GrpcClients
 
 class AbstractUnitOfWork(ABC):
     is_open: bool
@@ -37,15 +38,18 @@ class AbstractUnitOfWork(ABC):
 
 
 class UnitOfWork(AbstractUnitOfWork):
-    __slots__ = ('_session', 'product', 'is_open')
+    __slots__ = ('_session', 'product', 'users', 'is_open')
 
-    def __init__(self) -> None:
+    def __init__(self, grpc_clients: GrpcClients) -> None:
         self.is_open = False
+        self._grpc = grpc_clients
 
-    async def __aenter__(self) -> None:
+    async def __aenter__(self) -> "UnitOfWork":
         self._session = async_session_maker()
         self.product = ProductRepository(self._session)
+        self.users = self._grpc.user
         self.is_open = True
+        return self
 
     async def __aexit__(
         self,

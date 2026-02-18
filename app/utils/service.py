@@ -54,10 +54,20 @@ class AbstractService(ABC):
     async def add_one(self, *args: Any, **kwargs: Any) -> Never:
         raise NotImplementedError
 
+    @abstractmethod
     async def add_one_and_get_id(self, *args: Any, **kwargs: Any) -> Never:
         raise NotImplementedError
     
+    @abstractmethod
     async def add_one_and_get_obj(self, *args: Any, **kwargs: Any) -> Never:
+        raise NotImplementedError
+    
+    @abstractmethod
+    async def get_by_filter_one_or_none(self, *args: Any, **kwargs: Any) -> Never:
+        raise NotImplementedError
+    
+    @abstractmethod
+    async def get_by_filter_all(self, *args: Any, **kwargs: Any) -> Never:
         raise NotImplementedError
     
 
@@ -94,3 +104,11 @@ class BaseService(AbstractService):
     @transaction_mode
     async def add_one_and_get_obj(self, **kwargs: Any) -> Any:
         return await self._get_related_repo().add_one_and_get_obj(**kwargs)
+    
+    @transaction_mode
+    async def get_by_filter_one_or_none(self, **kwargs: Any) -> Never:
+        return await self._get_related_repo().get_by_filter_one_or_none(**kwargs)
+    
+    @transaction_mode
+    async def get_by_filter_all(self, *args: Any, **kwargs: Any) -> Never:
+        return await self._get_related_repo().get_by_filter_one_or_none(**kwargs)
