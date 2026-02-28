@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import Sequence
 
 from fastapi import APIRouter, Depends
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT 
@@ -32,3 +33,15 @@ async def get_product(
     service: ProductService = Depends(get_product_service)
 ):
     return await service.get_product_by_id(product_id)
+
+
+@router.get(
+    path="/all",
+    status_code=HTTP_200_OK,
+    response_model=Sequence[ProductResponce]
+)
+async def get_all_products(
+    service: ProductService = Depends(get_product_service)
+):
+    products = await service.get_all_products()
+    return products

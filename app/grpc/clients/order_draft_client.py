@@ -2,11 +2,6 @@ from uuid import UUID, uuid4
 
 import grpc
 from starlette.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_403_FORBIDDEN,
-    HTTP_404_NOT_FOUND,
-    HTTP_504_GATEWAY_TIMEOUT,
-    HTTP_503_SERVICE_UNAVAILABLE,
     HTTP_502_BAD_GATEWAY,
 )
 

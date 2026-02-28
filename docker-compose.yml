@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  catalog-app:
+    build: 
+      context: .
+      dockerfile: dockerfile
+    container_name: catalog-service
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${CATALOG_DB_USER}:${CATALOG_DB_PASSWORD}@catalog-db:5432/${CATALOG_DB_NAME}
+    depends_on:
+      catalog-db:
+        condition: service_healthy
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  catalog-db:
+    image: postgres:15-alpine
+    container_name: catalog-service-db
+    environment:
+      POSTGRES_USER: ${CATALOG_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${CATALOG_DB_PASSWORD:-123}
+      POSTGRES_DB: ${CATALOG_DB_NAME:-softam_catalog_service}
+    ports:
+      - "5436:5432"
+    volumes:
+      - catalog_service_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CATALOG_DB_USER:-postgres} -d ${CATALOG_DB_NAME:-softam_catalog_service}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  catalog_service_data:

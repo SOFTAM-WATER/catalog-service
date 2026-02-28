@@ -1,5 +1,7 @@
 from uuid import UUID
+from typing import Sequence
 
+from app.models.products import Product
 from app.utils.service import BaseService, transaction_mode
 from app.schemas.products import CreateProductRequest
 from app.utils.error_codes import ErrorCode
@@ -19,3 +21,7 @@ class ProductService(BaseService):
         self.check_existence(obj=product, details=ErrorCode.PRODUCT_NOT_FOUND)
         assert product is not None
         return product.to_schema()
+    
+    @transaction_mode
+    async def get_all_products(self) -> Sequence[Product]:
+        return await self.uow.product.get_by_filter_all()

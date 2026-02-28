@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
-
 from types import TracebackType
 from typing import Any, Never
+
+from fastapi import Depends
 
 from app.database.db import async_session_maker
 from app.repositories.product_repo import ProductRepository
 from app.grpc.container import GrpcClients
+from app.api.v1.deps.grpc import get_grpc_clients
 
 class AbstractUnitOfWork(ABC):
     is_open: bool
@@ -38,9 +40,12 @@ class AbstractUnitOfWork(ABC):
 
 
 class UnitOfWork(AbstractUnitOfWork):
-    __slots__ = ('_session', 'product', 'users', 'is_open')
+    __slots__ = ('_session', 'product', 'users', 'is_open', '_grpc')
 
-    def __init__(self, grpc_clients: GrpcClients) -> None:
+    def __init__(
+        self, 
+        grpc_clients: GrpcClients = Depends(get_grpc_clients)
+    ) -> None:
         self.is_open = False
         self._grpc = grpc_clients
 
