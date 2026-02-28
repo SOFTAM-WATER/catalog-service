@@ -9,7 +9,7 @@ from app.utils.error_codes import ErrorCode
 
 
 class OrderDraftService(BaseService):
-    _repo: str | None = None
+    _repo: str = ""
     
     @transaction_mode
     async def create_order_draft(self, draft: CreateOrderDraftRequest):
@@ -23,10 +23,7 @@ class OrderDraftService(BaseService):
             )
 
         product_ids = [item.product_id for item in draft.items]
-
-        products = await self.uow.product.get_by_filter_all(
-            *product_ids
-        )
+        products = await self.uow.product.get_by_ids(product_ids)
 
         if len(products) != len(product_ids):
             raise AppError(
@@ -35,6 +32,8 @@ class OrderDraftService(BaseService):
                 HTTP_404_NOT_FOUND
             )
 
+        order_user_id = await self.uow.orders.create_order_draft(user_id, draft)
+        return {"order_user_id": str(order_user_id)}
         
 
         

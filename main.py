@@ -9,6 +9,7 @@ from app.core.errors import AppError
 from app.core.config import get_settings
 from app.grpc.container import GrpcClients
 from app.api.v1.handlers.products import router as products_router
+from app.api.v1.handlers.order_drafts import router as order_drafts_router
 from scripts.init_models import init_models
 
 
@@ -42,6 +43,7 @@ async def app_error_handler(request: Request, exc: AppError):
 
 
 app.include_router(products_router)
+app.include_router(order_drafts_router)
 
 
 @app.on_event("shutdown")

@@ -38,6 +38,7 @@ class UserClient:
             return UUID(resp.user_id)
 
         except grpc.aio.AioRpcError as e:
+            print(f"gRPC Error: code={e.code()}, details={e.details()}")
             self._handle_grpc_error(e)
             
         

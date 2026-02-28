@@ -8,8 +8,6 @@ from app.api.v1.deps.services import get_product_service
 from app.schemas.products import CreateProductRequest, ProductResponce
 from app.api.v1.services.product_service import ProductService
 
-
-
 router = APIRouter(prefix="/products")
 
 @router.post(

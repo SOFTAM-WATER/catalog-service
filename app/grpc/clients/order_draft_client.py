@@ -56,7 +56,7 @@ class OrderDraftClient:
 
         try:
             resp = await self._stub.CreateOrderFromDraft(request, timeout=2.0)
-            return UUID(resp.user_id)
+            return UUID(resp.order_id)
         
         except grpc.aio.AioRpcError as e:
             self._handle_grpc_error(e)
@@ -64,5 +64,4 @@ class OrderDraftClient:
         
     def _handle_grpc_error(self, e: grpc.aio.AioRpcError):
         code = e.code()
-        
         raise AppError("Order Service Error.", ErrorCode.ORDER_SVC_ERROR, HTTP_502_BAD_GATEWAY)

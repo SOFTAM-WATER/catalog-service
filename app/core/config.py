@@ -9,6 +9,7 @@ load_dotenv(find_dotenv(".env"))
 class Settings(BaseSettings):
     database_url: str = os.getenv("DATABASE_URL", "")
     USER_SVC: str = os.getenv("USER_SVC", "")
+    ORDER_SVC: str = os.getenv("ORDER_SVC", "")
 
     model_config={
         "env_file": ".env",

@@ -9,9 +9,14 @@ from app.repositories.product_repo import ProductRepository
 from app.grpc.container import GrpcClients
 from app.api.v1.deps.grpc import get_grpc_clients
 
+from app.grpc.clients.user_client import UserClient
+from app.grpc.clients.order_draft_client import OrderDraftClient
+
 class AbstractUnitOfWork(ABC):
     is_open: bool
-    product: ProductRepository
+    product: "ProductRepository"
+    users: "UserClient"
+    orders: "OrderDraftClient"
 
     @abstractmethod
     def __init__(self) -> Never:
@@ -40,7 +45,7 @@ class AbstractUnitOfWork(ABC):
 
 
 class UnitOfWork(AbstractUnitOfWork):
-    __slots__ = ('_session', 'product', 'users', 'is_open', '_grpc')
+    __slots__ = ('_session', 'product', 'users', 'orders', 'is_open', '_grpc')
 
     def __init__(
         self, 
@@ -53,6 +58,7 @@ class UnitOfWork(AbstractUnitOfWork):
         self._session = async_session_maker()
         self.product = ProductRepository(self._session)
         self.users = self._grpc.user
+        self.orders = self._grpc.order
         self.is_open = True
         return self
 
