@@ -23,3 +23,7 @@ class CreateOrderDraftRequest(BaseModel):
     slot_to: datetime.time
     
     items: List[CreateOrderItemRequest]
+
+
+class OrderResponse(BaseModel):
+    order_id: UUID

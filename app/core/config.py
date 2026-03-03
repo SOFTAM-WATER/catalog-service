@@ -7,10 +7,13 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv(".env"))
 
 class Settings(BaseSettings):
-    database_url: str = os.getenv("DATABASE_URL", "")
-    USER_SVC: str = os.getenv("USER_SVC", "")
-    ORDER_SVC: str = os.getenv("ORDER_SVC", "")
+    database_url: str
+    SECRET_KEY: str
+    USER_SVC: str 
+    ORDER_SVC: str 
 
+    ALGORITHM: str = "HS256"
+    
     model_config={
         "env_file": ".env",
         "extra": "ignore"
@@ -19,5 +22,5 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    return Settings() #type:ignore
 

@@ -1,0 +1,23 @@
+# Скрытые папки и Git
+.git
+.gitignore
+.env
+.vscode
+.idea
+
+# Python мусор
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Логи и временные файлы
+*.log
+.DS_Store (если ты вдруг на маке иногда)
+
+# Сам Docker
+Dockerfile
+.dockerignore

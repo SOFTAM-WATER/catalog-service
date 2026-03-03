@@ -4,7 +4,7 @@ from starlette.status import HTTP_404_NOT_FOUND
 
 from app.core.errors import AppError
 from app.utils.service import BaseService, transaction_mode
-from app.schemas.order_drafts import CreateOrderDraftRequest
+from app.schemas.order_drafts import CreateOrderDraftRequest, OrderResponse
 from app.utils.error_codes import ErrorCode
 
 
@@ -12,7 +12,7 @@ class OrderDraftService(BaseService):
     _repo: str = ""
     
     @transaction_mode
-    async def create_order_draft(self, draft: CreateOrderDraftRequest):
+    async def create_order_draft(self, draft: CreateOrderDraftRequest) ->OrderResponse:
         user_id: UUID | None = None
 
         if draft.telegram_id:
@@ -32,8 +32,8 @@ class OrderDraftService(BaseService):
                 HTTP_404_NOT_FOUND
             )
 
-        order_user_id = await self.uow.orders.create_order_draft(user_id, draft)
-        return {"order_user_id": str(order_user_id)}
+        order_id = await self.uow.orders.create_order_draft(user_id, draft)
+        return OrderResponse(order_id=order_id)
         
 
         
